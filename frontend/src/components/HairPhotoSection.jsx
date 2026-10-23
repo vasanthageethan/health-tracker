@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { getHairPhotos, uploadHairPhoto, hairPhotoImageUrl } from '../api'
+import { getHairPhotos, uploadHairPhoto } from '../api'
 import { todayStr } from '../lib/dates'
+import AuthImage from './AuthImage'
 
 const VIEWS = ['HAIRLINE', 'TEMPLES', 'CROWN']
 
@@ -37,12 +38,12 @@ export default function HairPhotoSection({ onChanged }) {
             <h3>{view}</h3>
             <div className="photo-pair">
               <figure>
-                <img src={hairPhotoImageUrl(baseline.id)} alt={`${view} baseline`} />
+                <AuthImage photoId={baseline.id} alt={`${view} baseline`} />
                 <figcaption>Baseline · {baseline.date}</figcaption>
               </figure>
               {latest.id !== baseline.id && (
                 <figure>
-                  <img src={hairPhotoImageUrl(latest.id)} alt={`${view} latest`} />
+                  <AuthImage photoId={latest.id} alt={`${view} latest`} />
                   <figcaption>Latest · {latest.date}</figcaption>
                 </figure>
               )}

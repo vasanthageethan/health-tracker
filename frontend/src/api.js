@@ -1,14 +1,49 @@
 const BASE = `http://${window.location.hostname}:8080/api`
+const TOKEN_KEY = 'health-tracker-token'
+
+export const getToken = () => localStorage.getItem(TOKEN_KEY)
+export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token)
+export const clearToken = () => localStorage.removeItem(TOKEN_KEY)
+
+function authHeaders() {
+  const token = getToken()
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
 
 async function request(path, options) {
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     ...options,
   })
+  if (res.status === 401) {
+    clearToken()
+    window.location.reload()
+    return new Promise(() => {}) // reloading; never resolve
+  }
   if (res.status === 404) return null
   if (!res.ok) throw new Error(`${options?.method ?? 'GET'} ${path} failed: ${res.status}`)
   if (res.status === 204) return null
   return res.json()
+}
+
+export const getAuthStatus = () => request('/auth/status')
+export async function setupAuth(pin) {
+  const res = await fetch(`${BASE}/auth/setup`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin }),
+  })
+  if (!res.ok) return null
+  const data = await res.json()
+  setToken(data.token)
+  return data
+}
+export async function loginAuth(pin) {
+  const res = await fetch(`${BASE}/auth/login`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin }),
+  })
+  if (!res.ok) return null
+  const data = await res.json()
+  setToken(data.token)
+  return data
 }
 
 export const getDailyLog = (date) => request(`/daily-logs/${date}`)
@@ -40,7 +75,13 @@ export const createLabResults = (results) =>
   request('/lab-results', { method: 'POST', body: JSON.stringify(results) })
 
 export const getHairPhotos = () => request('/hair-photos')
-export const hairPhotoImageUrl = (id) => `${BASE}/hair-photos/${id}/image`
+
+// <img> tags can't send our Authorization header, so photos are fetched as blobs instead.
+export async function fetchHairPhotoBlobUrl(id) {
+  const res = await fetch(`${BASE}/hair-photos/${id}/image`, { headers: authHeaders() })
+  if (!res.ok) return null
+  return URL.createObjectURL(await res.blob())
+}
 export async function uploadHairPhoto({ date, view, sheddingNote, sideEffectNote, file }) {
   const form = new FormData()
   form.append('date', date)
@@ -48,7 +89,12 @@ export async function uploadHairPhoto({ date, view, sheddingNote, sideEffectNote
   if (sheddingNote) form.append('sheddingNote', sheddingNote)
   if (sideEffectNote) form.append('sideEffectNote', sideEffectNote)
   form.append('file', file)
-  const res = await fetch(`${BASE}/hair-photos`, { method: 'POST', body: form })
+  const res = await fetch(`${BASE}/hair-photos`, { method: 'POST', headers: authHeaders(), body: form })
+  if (res.status === 401) {
+    clearToken()
+    window.location.reload()
+    return new Promise(() => {})
+  }
   if (!res.ok) throw new Error(`POST /hair-photos failed: ${res.status}`)
   return res.json()
 }

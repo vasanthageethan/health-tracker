@@ -64,6 +64,25 @@ h2 {
   margin-bottom: 16px;
 }
 
+.lock-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  text-align: center;
+  gap: 12px;
+}
+
+.lock-screen input {
+  max-width: 200px;
+  text-align: center;
+}
+
+.lock-screen button {
+  max-width: 200px;
+}
+
 label {
   display: block;
   font-size: 14px;
@@ -214,10 +233,16 @@ button {
   text-align: center;
 }
 
-.photo-pair img {
+.photo-pair img,
+.photo-placeholder {
   width: 100%;
+  aspect-ratio: 1;
   border-radius: 6px;
   border: 1px solid var(--border);
+}
+
+.photo-placeholder {
+  background: var(--bg);
 }
 
 .photo-pair figcaption {
