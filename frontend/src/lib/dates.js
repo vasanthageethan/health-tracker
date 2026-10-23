@@ -4,7 +4,11 @@ export function todayStr() {
 }
 
 export function yesterdayOf(dateStr) {
+  return daysBefore(dateStr, 1)
+}
+
+export function daysBefore(dateStr, n) {
   const d = new Date(`${dateStr}T00:00:00`)
-  d.setDate(d.getDate() - 1)
+  d.setDate(d.getDate() - n)
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }

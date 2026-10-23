@@ -49,13 +49,16 @@ export async function loginAuth(pin) {
 export const getDailyLog = (date) => request(`/daily-logs/${date}`)
 export const saveDailyLog = (date, log) =>
   request(`/daily-logs/${date}`, { method: 'PUT', body: JSON.stringify(log) })
+export const getDailyLogsRange = (from, to) => request(`/daily-logs?from=${from}&to=${to}`)
 
 export const getTreatments = () => request('/treatments')
 export const getTreatmentLogs = (date) => request(`/treatment-logs?date=${date}`)
+export const getTreatmentLogsRange = (from, to) => request(`/treatment-logs?from=${from}&to=${to}`)
 export const saveTreatmentLog = (date, treatmentId, log) =>
   request(`/treatment-logs/${date}/${treatmentId}`, { method: 'PUT', body: JSON.stringify(log) })
 
 export const getWorkouts = (date) => request(`/workouts?date=${date}`)
+export const getWorkoutsRange = (from, to) => request(`/workouts?from=${from}&to=${to}`)
 export const createWorkout = (workout) =>
   request('/workouts', { method: 'POST', body: JSON.stringify(workout) })
 export const deleteWorkout = (id) => request(`/workouts/${id}`, { method: 'DELETE' })

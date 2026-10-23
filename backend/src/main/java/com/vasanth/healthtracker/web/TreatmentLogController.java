@@ -18,8 +18,13 @@ public class TreatmentLogController {
     }
 
     @GetMapping
-    public List<TreatmentLog> listForDate(@RequestParam LocalDate date) {
-        return repository.findByDate(date);
+    public List<TreatmentLog> list(@RequestParam(required = false) LocalDate date,
+                                    @RequestParam(required = false) LocalDate from,
+                                    @RequestParam(required = false) LocalDate to) {
+        if (date != null) {
+            return repository.findByDate(date);
+        }
+        return repository.findByDateBetween(from, to);
     }
 
     @PutMapping("/{date}/{treatmentId}")

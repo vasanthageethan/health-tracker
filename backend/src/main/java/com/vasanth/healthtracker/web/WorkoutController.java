@@ -18,8 +18,13 @@ public class WorkoutController {
     }
 
     @GetMapping
-    public List<Workout> listForDate(@RequestParam LocalDate date) {
-        return repository.findByDateOrderByIdDesc(date);
+    public List<Workout> list(@RequestParam(required = false) LocalDate date,
+                               @RequestParam(required = false) LocalDate from,
+                               @RequestParam(required = false) LocalDate to) {
+        if (date != null) {
+            return repository.findByDateOrderByIdDesc(date);
+        }
+        return repository.findByDateBetween(from, to);
     }
 
     @PostMapping

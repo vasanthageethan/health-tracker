@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface TreatmentLogRepository extends JpaRepository<TreatmentLog, Long> {
     List<TreatmentLog> findByDate(LocalDate date);
+    List<TreatmentLog> findByDateBetween(LocalDate from, LocalDate to);
     Optional<TreatmentLog> findByDateAndTreatmentId(LocalDate date, Long treatmentId);
 }
