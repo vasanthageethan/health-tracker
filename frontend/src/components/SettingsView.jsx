@@ -17,6 +17,7 @@ export default function SettingsView() {
   const [treatments, setTreatments] = useState([])
   const [targets, setTargets] = useState({})
   const [editValues, setEditValues] = useState({})
+  const [savedCode, setSavedCode] = useState(null)
   const [newTreatment, setNewTreatment] = useState({ name: '', schedule: 'DAILY', startDate: todayStr() })
 
   useEffect(() => {
@@ -47,6 +48,8 @@ export default function SettingsView() {
     await createTarget({ metricCode: code, comparator: current?.comparator ?? 'GTE', value: Number(value) })
     setEditValues((v) => ({ ...v, [code]: undefined }))
     refreshAll()
+    setSavedCode(code)
+    setTimeout(() => setSavedCode((c) => (c === code ? null : c)), 2000)
   }
 
   const activeTreatments = treatments.filter((t) => !t.endDate)
@@ -87,12 +90,14 @@ export default function SettingsView() {
 
       <section className="card">
         <h2>Scorecard targets</h2>
+        <p className="status">Change a number, then tap its Save button. New value applies from today — past weeks keep grading against whatever was set then.</p>
         {Object.entries(TARGET_LABELS).map(([code, label]) => (
           <div key={code} className="target-row">
             <span>{label}</span>
             <input type="number" step="0.1" value={editValues[code] ?? targets[code]?.value ?? ''}
               onChange={(e) => setEditValues((v) => ({ ...v, [code]: e.target.value }))} />
             <button onClick={() => handleSaveTarget(code)}>Save</button>
+            {savedCode === code && <span className="saved-check">Saved ✓</span>}
           </div>
         ))}
       </section>

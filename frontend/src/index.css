@@ -340,6 +340,7 @@ button {
 .target-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 6px 0;
   border-bottom: 1px solid var(--border);
@@ -353,4 +354,11 @@ button {
 .target-row input {
   width: 70px;
   margin-top: 0;
+}
+
+.saved-check {
+  flex: 0 0 100%;
+  color: var(--accent);
+  font-size: 12px;
+  text-align: right;
 }
