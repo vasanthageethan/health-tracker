@@ -1,4 +1,4 @@
-const BASE = `http://${window.location.hostname}:8080/api`
+const BASE = '/api'
 const TOKEN_KEY = 'health-tracker-token'
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY)

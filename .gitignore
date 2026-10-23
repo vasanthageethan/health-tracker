@@ -2,4 +2,5 @@ backend/target/
 backend/data/
 frontend/node_modules/
 frontend/dist/
+backend/src/main/resources/static/
 .DS_Store
