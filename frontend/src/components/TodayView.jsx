@@ -5,6 +5,8 @@ import {
   getWorkouts, createWorkout, deleteWorkout,
 } from '../api'
 import { todayStr, yesterdayOf } from '../lib/dates'
+import WeatherCard from './WeatherCard'
+import RunPlanSection from './RunPlanSection'
 
 const DAY_CODES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
@@ -28,6 +30,7 @@ export default function TodayView() {
   const [newStrength, setNewStrength] = useState({ subtype: '', minutes: '' })
   const [newCardio, setNewCardio] = useState({ type: 'RUN', subtype: '', minutes: '', distanceKm: '', outdoor: false })
   const [status, setStatus] = useState('')
+  const [runPlanRefreshKey, setRunPlanRefreshKey] = useState(0)
 
   useEffect(() => {
     getTreatments().then((t) => setTreatments(t ?? []))
@@ -110,11 +113,14 @@ export default function TodayView() {
     })
     setWorkouts((prev) => [created, ...prev])
     setNewCardio({ type: 'RUN', subtype: '', minutes: '', distanceKm: '', outdoor: false })
+    if (created.type === 'RUN') setRunPlanRefreshKey((k) => k + 1)
   }
 
   async function handleDeleteWorkout(id) {
+    const deleted = workouts.find((w) => w.id === id)
     await deleteWorkout(id)
     setWorkouts((prev) => prev.filter((w) => w.id !== id))
+    if (deleted?.type === 'RUN') setRunPlanRefreshKey((k) => k + 1)
   }
 
   const dueTreatments = treatments.filter((t) => isDueToday(t.schedule, date))
@@ -204,6 +210,9 @@ export default function TodayView() {
           <button onClick={handleAddStrength}>Add strength session</button>
         </div>
       </section>
+
+      <WeatherCard />
+      <RunPlanSection key={runPlanRefreshKey} />
 
       <section className="card">
         <h2>Cardio</h2>

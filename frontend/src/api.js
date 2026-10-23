@@ -63,6 +63,11 @@ export const createWorkout = (workout) =>
   request('/workouts', { method: 'POST', body: JSON.stringify(workout) })
 export const deleteWorkout = (id) => request(`/workouts/${id}`, { method: 'DELETE' })
 
+export const getRunPlanCurrent = () => request('/run-plan/current')
+export const initRunPlan = (plan) => request('/run-plan/init', { method: 'POST', body: JSON.stringify(plan) })
+
+export const getWeatherToday = () => request('/weather/today')
+
 export const getDueStatus = () => request('/due-status')
 
 export const getBodyMeasurements = () => request('/body-measurements')
