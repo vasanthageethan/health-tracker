@@ -13,8 +13,10 @@ import java.util.Map;
 @RequestMapping("/api/targets")
 public class TargetController {
 
+    // Resting HR deliberately excluded: it's a biomarker outcome, not a behavior you
+    // directly control day to day. Still logged and charted, just not graded.
     static final List<String> METRIC_CODES = List.of(
-            "SLEEP_MIN_HOURS", "SLEEP_MAX_HOURS", "ON_SCHEDULE_NIGHTS", "RESTING_HR",
+            "SLEEP_MIN_HOURS", "SLEEP_MAX_HOURS", "ON_SCHEDULE_NIGHTS",
             "STRENGTH_SESSIONS", "RUNS", "CARDIO_MINUTES", "PROTEIN_PER_KG", "HAIR_ADHERENCE_PCT");
 
     private final TargetRepository repository;

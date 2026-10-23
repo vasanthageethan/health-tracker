@@ -6,7 +6,6 @@ const TARGET_LABELS = {
   SLEEP_MIN_HOURS: 'Sleep minimum (hours)',
   SLEEP_MAX_HOURS: 'Sleep maximum (hours)',
   ON_SCHEDULE_NIGHTS: 'On-schedule nights per week',
-  RESTING_HR: 'Resting HR ceiling (bpm)',
   STRENGTH_SESSIONS: 'Strength sessions per week',
   RUNS: 'Runs per week',
   CARDIO_MINUTES: 'Cardio minutes per week',

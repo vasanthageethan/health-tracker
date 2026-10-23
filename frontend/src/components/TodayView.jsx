@@ -3,6 +3,7 @@ import {
   getDailyLog, saveDailyLog,
   getTreatments, getTreatmentLogs, saveTreatmentLog,
   getWorkouts, createWorkout, deleteWorkout,
+  getCurrentTargets,
 } from '../api'
 import { todayStr, yesterdayOf } from '../lib/dates'
 import { isDueOn } from '../lib/schedule'
@@ -24,9 +25,11 @@ export default function TodayView() {
   const [newCardio, setNewCardio] = useState({ type: 'RUN', subtype: '', minutes: '', distanceKm: '', outdoor: false })
   const [status, setStatus] = useState('')
   const [runPlanRefreshKey, setRunPlanRefreshKey] = useState(0)
+  const [targets, setTargets] = useState({})
 
   useEffect(() => {
     getTreatments().then((t) => setTreatments(t ?? []))
+    getCurrentTargets().then((t) => setTargets(t ?? {}))
   }, [])
 
   useEffect(() => {
@@ -120,6 +123,13 @@ export default function TodayView() {
   const strengthWorkouts = workouts.filter((w) => w.type === 'STRENGTH')
   const cardioWorkouts = workouts.filter((w) => w.type === 'RUN' || w.type === 'CARDIO')
 
+  const targetValue = (code, fallback) => targets[code]?.value ?? fallback
+  const sleepMin = targetValue('SLEEP_MIN_HOURS', 7)
+  const sleepMax = targetValue('SLEEP_MAX_HOURS', 9)
+  const onScheduleTarget = targetValue('ON_SCHEDULE_NIGHTS', 5)
+  const proteinPerKg = targetValue('PROTEIN_PER_KG', 1.6)
+  const proteinTarget = log.weightKg ? (Number(log.weightKg) * proteinPerKg).toFixed(0) : null
+
   return (
     <>
       <div className="day-picker">
@@ -129,37 +139,38 @@ export default function TodayView() {
       <section className="card">
         <h2>Today</h2>
 
-        <label>Sleep (hours)
+        <h3 className="field-group">Sleep &amp; schedule</h3>
+        <label>Sleep (hours) <span className="hint">target {sleepMin}–{sleepMax}h</span>
           <input type="number" step="0.1" value={log.sleepHours}
             onChange={(e) => updateField('sleepHours', e.target.value)} />
         </label>
-
         <label className="checkbox">
           <input type="checkbox" checked={!!log.onSchedule}
             onChange={(e) => updateField('onSchedule', e.target.checked)} />
-          Bed/wake on schedule
+          Bed/wake on schedule <span className="hint">target {onScheduleTarget}+ nights/week</span>
         </label>
 
+        <h3 className="field-group">Body</h3>
         <label>Resting heart rate (bpm)
           <input type="number" value={log.restingHr}
             onChange={(e) => updateField('restingHr', e.target.value)} />
         </label>
-
         <label>Weight (kg)
           <input type="number" step="0.1" value={log.weightKg}
             onChange={(e) => updateField('weightKg', e.target.value)} />
         </label>
 
-        <label>Protein (g)
+        <h3 className="field-group">Nutrition</h3>
+        <label>Protein (g) {proteinTarget && <span className="hint">target {proteinTarget}g+</span>}
           <input type="number" value={log.proteinG}
             onChange={(e) => updateField('proteinG', e.target.value)} />
         </label>
-
         <label>Alcoholic drinks
           <input type="number" value={log.alcoholDrinks}
             onChange={(e) => updateField('alcoholDrinks', e.target.value)} />
         </label>
 
+        <h3 className="field-group">Side-effect check</h3>
         <label className="checkbox">
           <input type="checkbox" checked={!!log.morningErection}
             onChange={(e) => updateField('morningErection', e.target.checked)} />

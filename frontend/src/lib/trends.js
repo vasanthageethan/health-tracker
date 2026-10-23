@@ -28,7 +28,6 @@ export function computeScorecard({ dailyLogs, workouts, treatmentLogs, treatment
   const sleepMin = targetValue(targets, 'SLEEP_MIN_HOURS', 7)
   const sleepMax = targetValue(targets, 'SLEEP_MAX_HOURS', 9)
   const onScheduleTarget = targetValue(targets, 'ON_SCHEDULE_NIGHTS', 5)
-  const hrTarget = targetValue(targets, 'RESTING_HR', 70)
   const strengthTarget = targetValue(targets, 'STRENGTH_SESSIONS', 3)
   const runsTarget = targetValue(targets, 'RUNS', 2)
   const cardioTarget = targetValue(targets, 'CARDIO_MINUTES', 150)
@@ -39,9 +38,6 @@ export function computeScorecard({ dailyLogs, workouts, treatmentLogs, treatment
   const avgSleep = average(sleepValues)
 
   const onScheduleNights = dailyLogs.filter((l) => l.onSchedule === true).length
-
-  const hrValues = dailyLogs.map((l) => l.restingHr).filter((v) => v != null)
-  const avgHr = average(hrValues)
 
   const strengthCount = workouts.filter((w) => w.type === 'STRENGTH').length
   const runCount = workouts.filter((w) => w.type === 'RUN').length
@@ -70,7 +66,6 @@ export function computeScorecard({ dailyLogs, workouts, treatmentLogs, treatment
   const items = [
     { label: `Sleep ${sleepMin}–${sleepMax}h avg`, met: avgSleep != null && avgSleep >= sleepMin && avgSleep <= sleepMax, detail: avgSleep != null ? `${avgSleep.toFixed(1)}h avg` : 'no data' },
     { label: `On-schedule nights (${onScheduleTarget}+)`, met: onScheduleNights >= onScheduleTarget, detail: `${onScheduleNights}/${days.length}` },
-    { label: `Resting HR under ${hrTarget}`, met: avgHr != null && avgHr < hrTarget, detail: avgHr != null ? `${avgHr.toFixed(0)} avg` : 'no data' },
     { label: `Strength ${strengthTarget}x`, met: strengthCount >= strengthTarget, detail: `${strengthCount}` },
     { label: `Runs ${runsTarget}x`, met: runCount >= runsTarget, detail: `${runCount}` },
     { label: `Cardio ${cardioTarget}min total`, met: cardioMinutes >= cardioTarget, detail: `${cardioMinutes}min` },
@@ -93,13 +88,13 @@ if (import.meta.env.DEV) {
     from: '2026-10-20', to: '2026-10-20',
   })
   console.assert(result.items[0].met === true, 'trends self-check: sleep target should pass')
-  console.assert(result.items[3].met === true, 'trends self-check: strength target should pass at 3 sessions')
-  console.assert(result.items[7].met === true, 'trends self-check: single due item done should be 100% adherence')
+  console.assert(result.items[2].met === true, 'trends self-check: strength target should pass at 3 sessions')
+  console.assert(result.items[6].met === true, 'trends self-check: single due item done should be 100% adherence')
 
   const endedTreatment = computeScorecard({
     dailyLogs: [], workouts: [], treatmentLogs: [],
     treatments: [{ id: 1, schedule: 'DAILY', startDate: '2026-01-01', endDate: '2026-10-01' }],
     from: '2026-10-20', to: '2026-10-20',
   })
-  console.assert(endedTreatment.items[7].detail === 'no data', 'trends self-check: treatment ended before range should not count as due')
+  console.assert(endedTreatment.items[6].detail === 'no data', 'trends self-check: treatment ended before range should not count as due')
 }

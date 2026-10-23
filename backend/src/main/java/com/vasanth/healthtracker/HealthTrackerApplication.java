@@ -45,7 +45,6 @@ public class HealthTrackerApplication {
             targets.save(new Target(null, "SLEEP_MIN_HOURS", "GTE", 7.0, from));
             targets.save(new Target(null, "SLEEP_MAX_HOURS", "LTE", 9.0, from));
             targets.save(new Target(null, "ON_SCHEDULE_NIGHTS", "GTE", 5.0, from));
-            targets.save(new Target(null, "RESTING_HR", "LTE", 70.0, from));
             targets.save(new Target(null, "STRENGTH_SESSIONS", "GTE", 3.0, from));
             targets.save(new Target(null, "RUNS", "GTE", 2.0, from));
             targets.save(new Target(null, "CARDIO_MINUTES", "GTE", 150.0, from));
