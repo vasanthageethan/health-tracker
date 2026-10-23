@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getDailyLogsRange, getWorkoutsRange, getTreatmentLogsRange, getTreatments, getBodyMeasurements } from '../api'
+import { getDailyLogsRange, getWorkoutsRange, getTreatmentLogsRange, getTreatments, getBodyMeasurements, getCurrentTargets } from '../api'
 import { todayStr, daysBefore } from '../lib/dates'
 import { computeScorecard } from '../lib/trends'
 import TrendChart from './TrendChart'
@@ -13,6 +13,7 @@ export default function TrendsView() {
   const [bodyMeasurements, setBodyMeasurements] = useState([])
   const [treatmentLogs, setTreatmentLogs] = useState([])
   const [treatments, setTreatments] = useState([])
+  const [targets, setTargets] = useState({})
 
   const to = todayStr()
   const from = daysBefore(to, rangeWeeks * 7)
@@ -24,6 +25,7 @@ export default function TrendsView() {
     getTreatmentLogsRange(from, to).then((l) => setTreatmentLogs(l ?? []))
     getTreatments().then((t) => setTreatments(t ?? []))
     getBodyMeasurements().then((m) => setBodyMeasurements((m ?? []).filter((x) => x.date >= from)))
+    getCurrentTargets().then((t) => setTargets(t ?? {}))
   }, [from, to])
 
   const weeklyLogs = dailyLogs.filter((l) => l.date >= weekStart)
@@ -31,7 +33,7 @@ export default function TrendsView() {
   const weeklyTreatmentLogs = treatmentLogs.filter((l) => l.date >= weekStart)
   const scorecard = computeScorecard({
     dailyLogs: weeklyLogs, workouts: weeklyWorkouts, treatmentLogs: weeklyTreatmentLogs,
-    treatments, from: weekStart, to,
+    treatments, from: weekStart, to, targets,
   })
 
   const weightPoints = dailyLogs.map((l) => ({ date: l.date, value: l.weightKg }))

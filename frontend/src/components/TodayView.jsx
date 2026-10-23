@@ -5,16 +5,9 @@ import {
   getWorkouts, createWorkout, deleteWorkout,
 } from '../api'
 import { todayStr, yesterdayOf } from '../lib/dates'
+import { isDueOn } from '../lib/schedule'
 import WeatherCard from './WeatherCard'
 import RunPlanSection from './RunPlanSection'
-
-const DAY_CODES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
-
-function isDueToday(schedule, date) {
-  if (schedule === 'DAILY') return true
-  const todayCode = DAY_CODES[new Date(`${date}T00:00:00`).getDay()]
-  return schedule.split(',').includes(todayCode)
-}
 
 const EMPTY_LOG = {
   sleepHours: '', onSchedule: false, restingHr: '', weightKg: '',
@@ -123,7 +116,7 @@ export default function TodayView() {
     if (deleted?.type === 'RUN') setRunPlanRefreshKey((k) => k + 1)
   }
 
-  const dueTreatments = treatments.filter((t) => isDueToday(t.schedule, date))
+  const dueTreatments = treatments.filter((t) => isDueOn(t, date))
   const strengthWorkouts = workouts.filter((w) => w.type === 'STRENGTH')
   const cardioWorkouts = workouts.filter((w) => w.type === 'RUN' || w.type === 'CARDIO')
 

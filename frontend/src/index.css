@@ -298,3 +298,21 @@ button {
   text-align: center;
   margin: 2px 0 0;
 }
+
+.target-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.target-row span {
+  flex: 1;
+}
+
+.target-row input {
+  width: 70px;
+  margin-top: 0;
+}

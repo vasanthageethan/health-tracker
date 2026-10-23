@@ -1,10 +1,4 @@
-const DAY_CODES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
-
-function isDueOn(schedule, dateStr) {
-  if (schedule === 'DAILY') return true
-  const code = DAY_CODES[new Date(`${dateStr}T00:00:00`).getDay()]
-  return schedule.split(',').includes(code)
-}
+import { isDueOn } from './schedule'
 
 function average(values) {
   return values.length ? values.reduce((a, b) => a + b, 0) / values.length : null
@@ -21,11 +15,26 @@ function daysInRange(from, to) {
   return days
 }
 
+/** Falls back to the doc's own default if a target hasn't loaded or was never set. */
+function targetValue(targets, code, fallback) {
+  return targets?.[code]?.value ?? fallback
+}
+
 /**
- * Computes the 8-item weekly scorecard against the fixed targets from the use-case doc.
- * Hair-routine adherence passes at >=90% (not a strict 100%) to allow one missed dose.
+ * Computes the weekly scorecard against the user's current targets (editable in Settings).
+ * Hair-routine adherence target defaults to 90% (not a strict 100%) to allow one missed dose.
  */
-export function computeScorecard({ dailyLogs, workouts, treatmentLogs, treatments, from, to }) {
+export function computeScorecard({ dailyLogs, workouts, treatmentLogs, treatments, from, to, targets = {} }) {
+  const sleepMin = targetValue(targets, 'SLEEP_MIN_HOURS', 7)
+  const sleepMax = targetValue(targets, 'SLEEP_MAX_HOURS', 9)
+  const onScheduleTarget = targetValue(targets, 'ON_SCHEDULE_NIGHTS', 5)
+  const hrTarget = targetValue(targets, 'RESTING_HR', 70)
+  const strengthTarget = targetValue(targets, 'STRENGTH_SESSIONS', 3)
+  const runsTarget = targetValue(targets, 'RUNS', 2)
+  const cardioTarget = targetValue(targets, 'CARDIO_MINUTES', 150)
+  const proteinPerKg = targetValue(targets, 'PROTEIN_PER_KG', 1.6)
+  const adherenceTarget = targetValue(targets, 'HAIR_ADHERENCE_PCT', 90)
+
   const sleepValues = dailyLogs.map((l) => l.sleepHours).filter((v) => v != null)
   const avgSleep = average(sleepValues)
 
@@ -44,14 +53,14 @@ export function computeScorecard({ dailyLogs, workouts, treatmentLogs, treatment
   const avgProtein = average(proteinValues)
   const weightEntries = dailyLogs.map((l) => l.weightKg).filter((v) => v != null)
   const latestWeight = weightEntries.length ? weightEntries[weightEntries.length - 1] : null
-  const proteinTarget = latestWeight ? latestWeight * 1.6 : 134
+  const proteinTarget = latestWeight ? latestWeight * proteinPerKg : 134
 
   const days = daysInRange(from, to)
   let due = 0
   let done = 0
   for (const day of days) {
     for (const t of treatments) {
-      if (!isDueOn(t.schedule, day)) continue
+      if (!isDueOn(t, day)) continue
       due += 1
       if (treatmentLogs.some((l) => l.date === day && l.treatmentId === t.id && l.done)) done += 1
     }
@@ -59,14 +68,14 @@ export function computeScorecard({ dailyLogs, workouts, treatmentLogs, treatment
   const adherence = due > 0 ? done / due : null
 
   const items = [
-    { label: 'Sleep 7–9h avg', met: avgSleep != null && avgSleep >= 7 && avgSleep <= 9, detail: avgSleep != null ? `${avgSleep.toFixed(1)}h avg` : 'no data' },
-    { label: 'On-schedule nights (5+)', met: onScheduleNights >= 5, detail: `${onScheduleNights}/${days.length}` },
-    { label: 'Resting HR under 70', met: avgHr != null && avgHr < 70, detail: avgHr != null ? `${avgHr.toFixed(0)} avg` : 'no data' },
-    { label: 'Strength 3x', met: strengthCount >= 3, detail: `${strengthCount}` },
-    { label: 'Runs 2x', met: runCount >= 2, detail: `${runCount}` },
-    { label: 'Cardio 150min total', met: cardioMinutes >= 150, detail: `${cardioMinutes}min` },
+    { label: `Sleep ${sleepMin}–${sleepMax}h avg`, met: avgSleep != null && avgSleep >= sleepMin && avgSleep <= sleepMax, detail: avgSleep != null ? `${avgSleep.toFixed(1)}h avg` : 'no data' },
+    { label: `On-schedule nights (${onScheduleTarget}+)`, met: onScheduleNights >= onScheduleTarget, detail: `${onScheduleNights}/${days.length}` },
+    { label: `Resting HR under ${hrTarget}`, met: avgHr != null && avgHr < hrTarget, detail: avgHr != null ? `${avgHr.toFixed(0)} avg` : 'no data' },
+    { label: `Strength ${strengthTarget}x`, met: strengthCount >= strengthTarget, detail: `${strengthCount}` },
+    { label: `Runs ${runsTarget}x`, met: runCount >= runsTarget, detail: `${runCount}` },
+    { label: `Cardio ${cardioTarget}min total`, met: cardioMinutes >= cardioTarget, detail: `${cardioMinutes}min` },
     { label: `Protein ${proteinTarget.toFixed(0)}g`, met: avgProtein != null && avgProtein >= proteinTarget, detail: avgProtein != null ? `${avgProtein.toFixed(0)}g avg` : 'no data' },
-    { label: 'Hair routine adherence', met: adherence != null && adherence >= 0.9, detail: adherence != null ? `${Math.round(adherence * 100)}%` : 'no data' },
+    { label: 'Hair routine adherence', met: adherence != null && adherence * 100 >= adherenceTarget, detail: adherence != null ? `${Math.round(adherence * 100)}%` : 'no data' },
   ]
 
   return { items, metCount: items.filter((i) => i.met).length, total: items.length }
@@ -80,10 +89,17 @@ if (import.meta.env.DEV) {
       { type: 'RUN', minutes: 30 }, { type: 'RUN', minutes: 40 },
     ],
     treatmentLogs: [{ date: '2026-10-20', treatmentId: 1, done: true }],
-    treatments: [{ id: 1, schedule: 'DAILY' }],
+    treatments: [{ id: 1, schedule: 'DAILY', startDate: '2026-01-01', endDate: null }],
     from: '2026-10-20', to: '2026-10-20',
   })
   console.assert(result.items[0].met === true, 'trends self-check: sleep target should pass')
   console.assert(result.items[3].met === true, 'trends self-check: strength target should pass at 3 sessions')
   console.assert(result.items[7].met === true, 'trends self-check: single due item done should be 100% adherence')
+
+  const endedTreatment = computeScorecard({
+    dailyLogs: [], workouts: [], treatmentLogs: [],
+    treatments: [{ id: 1, schedule: 'DAILY', startDate: '2026-01-01', endDate: '2026-10-01' }],
+    from: '2026-10-20', to: '2026-10-20',
+  })
+  console.assert(endedTreatment.items[7].detail === 'no data', 'trends self-check: treatment ended before range should not count as due')
 }

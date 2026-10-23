@@ -52,6 +52,14 @@ export const saveDailyLog = (date, log) =>
 export const getDailyLogsRange = (from, to) => request(`/daily-logs?from=${from}&to=${to}`)
 
 export const getTreatments = () => request('/treatments')
+export const createTreatment = (t) => request('/treatments', { method: 'POST', body: JSON.stringify(t) })
+export const updateTreatment = (id, t) =>
+  request(`/treatments/${id}`, { method: 'PUT', body: JSON.stringify(t) })
+
+export const getCurrentTargets = () => request('/targets/current')
+export const getTargetHistory = () => request('/targets')
+export const createTarget = (t) => request('/targets', { method: 'POST', body: JSON.stringify(t) })
+
 export const getTreatmentLogs = (date) => request(`/treatment-logs?date=${date}`)
 export const getTreatmentLogsRange = (from, to) => request(`/treatment-logs?from=${from}&to=${to}`)
 export const saveTreatmentLog = (date, treatmentId, log) =>
