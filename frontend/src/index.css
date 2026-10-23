@@ -1,0 +1,227 @@
+:root {
+  --text: #1f2430;
+  --text-muted: #6b7280;
+  --bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --border: #d1d5db;
+  --accent: #16a34a;
+  --warn: #dc2626;
+
+  font: 16px/1.4 system-ui, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #e5e7eb;
+    --text-muted: #9ca3af;
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --border: #334155;
+    --accent: #22c55e;
+    --warn: #f87171;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 0;
+}
+
+h2 {
+  font-size: 17px;
+  margin: 0 0 12px;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+label.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+}
+
+input, select, textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+label.checkbox input {
+  width: auto;
+  margin-top: 0;
+}
+
+textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+button {
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+.status {
+  margin-left: 10px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.workout-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.workout-row button {
+  padding: 2px 8px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.workout-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tabs button {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+}
+
+.tabs button.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.day-picker {
+  margin-bottom: 16px;
+}
+
+.due-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.due-row.overdue span:last-child {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+.due-row.ok span:last-child {
+  color: var(--text-muted);
+}
+
+.overdue {
+  color: var(--warn);
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.lab-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 8px 0;
+  border-top: 1px dashed var(--border);
+}
+
+.photo-compare {
+  margin-bottom: 16px;
+}
+
+.photo-compare h3 {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.photo-pair {
+  display: flex;
+  gap: 8px;
+}
+
+.photo-pair figure {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.photo-pair img {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.photo-pair figcaption {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
