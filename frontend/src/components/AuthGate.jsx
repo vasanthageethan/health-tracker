@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { getAuthStatus, setupAuth, loginAuth } from '../api'
+import HeroIllustration from './HeroIllustration'
 
 const LOCK_AFTER_MS = 5 * 60 * 1000
 
@@ -55,6 +56,7 @@ export default function AuthGate({ children }) {
   const isSetup = state === 'setup'
   return (
     <div className="page lock-screen">
+      <HeroIllustration />
       <h1>Health Tracker</h1>
       <p>{isSetup ? 'Set a PIN to protect this app.' : 'Enter your PIN to unlock.'}</p>
       <input type="password" inputMode="numeric" placeholder="PIN" value={pin}

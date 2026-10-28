@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import AuthGate from './components/AuthGate'
+import HeroIllustration from './components/HeroIllustration'
 import TodayView from './components/TodayView'
 import ChecksView from './components/ChecksView'
 import TrendsView from './components/TrendsView'
@@ -12,7 +13,10 @@ export default function App() {
     <AuthGate>
       <div className="page">
         <header>
-          <h1>Health Tracker</h1>
+          <div className="brand">
+            <HeroIllustration size={32} />
+            <h1>Health Tracker</h1>
+          </div>
           <nav className="tabs">
             <button className={tab === 'today' ? 'active' : ''} onClick={() => setTab('today')}>Today</button>
             <button className={tab === 'checks' ? 'active' : ''} onClick={() => setTab('checks')}>Checks</button>
