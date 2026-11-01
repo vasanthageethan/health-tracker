@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       manifest: {
         name: 'Health Tracker',
         short_name: 'Health',

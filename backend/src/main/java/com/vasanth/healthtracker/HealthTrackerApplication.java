@@ -2,16 +2,21 @@ package com.vasanth.healthtracker;
 
 import com.vasanth.healthtracker.model.Target;
 import com.vasanth.healthtracker.model.Treatment;
+import com.vasanth.healthtracker.model.VapidKeys;
+import com.vasanth.healthtracker.push.VapidKeyGenerator;
 import com.vasanth.healthtracker.repository.TargetRepository;
 import com.vasanth.healthtracker.repository.TreatmentRepository;
+import com.vasanth.healthtracker.repository.VapidKeysRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalDate;
 
 @SpringBootApplication
+@EnableScheduling
 public class HealthTrackerApplication {
 
     public static void main(String[] args) {
@@ -50,6 +55,19 @@ public class HealthTrackerApplication {
             targets.save(new Target(null, "CARDIO_MINUTES", "GTE", 150.0, from));
             targets.save(new Target(null, "PROTEIN_PER_KG", "GTE", 1.6, from));
             targets.save(new Target(null, "HAIR_ADHERENCE_PCT", "GTE", 90.0, from));
+        };
+    }
+
+    // Generates the VAPID key pair once; never regenerated (would invalidate every
+    // stored push subscription).
+    @Bean
+    CommandLineRunner seedVapidKeys(VapidKeysRepository vapidKeys) {
+        return args -> {
+            if (vapidKeys.count() > 0) {
+                return;
+            }
+            VapidKeyGenerator.KeyPairStrings keyPair = VapidKeyGenerator.generate();
+            vapidKeys.save(new VapidKeys(1L, keyPair.publicKey(), keyPair.privateKey()));
         };
     }
 }

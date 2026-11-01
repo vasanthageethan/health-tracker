@@ -114,3 +114,10 @@ export async function uploadHairPhoto({ date, view, sheddingNote, sideEffectNote
   if (!res.ok) throw new Error(`POST /hair-photos failed: ${res.status}`)
   return res.json()
 }
+
+export const getVapidPublicKey = () => request('/push/vapid-public-key')
+export const subscribePush = (subscription) =>
+  request('/push/subscribe', { method: 'POST', body: JSON.stringify(subscription) })
+export const unsubscribePush = (endpoint) =>
+  request('/push/subscribe', { method: 'DELETE', body: JSON.stringify({ endpoint }) })
+export const sendTestPush = () => request('/push/test', { method: 'POST' })

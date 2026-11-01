@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getTreatments, createTreatment, updateTreatment, getCurrentTargets, createTarget } from '../api'
 import { todayStr } from '../lib/dates'
+import NotificationsSection from './NotificationsSection'
 
 const TARGET_LABELS = {
   SLEEP_MIN_HOURS: 'Sleep minimum (hours)',
@@ -101,6 +102,8 @@ export default function SettingsView() {
           </div>
         ))}
       </section>
+
+      <NotificationsSection />
     </>
   )
 }
