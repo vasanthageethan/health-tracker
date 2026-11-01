@@ -9,6 +9,18 @@ import { todayStr, yesterdayOf } from '../lib/dates'
 import { isDueOn } from '../lib/schedule'
 import WeatherCard from './WeatherCard'
 import RunPlanSection from './RunPlanSection'
+import StreaksCard from './StreaksCard'
+
+// The backend returns null for any field never saved; '' is what the EMPTY_LOG
+// defaults and the number/text inputs expect, so a bare null would otherwise flip
+// an input from controlled to uncontrolled and trigger a React warning.
+function withoutNulls(obj) {
+  const result = { ...obj }
+  for (const key of Object.keys(result)) {
+    if (result[key] === null) result[key] = ''
+  }
+  return result
+}
 
 const EMPTY_LOG = {
   sleepHours: '', onSchedule: false, restingHr: '', weightKg: '',
@@ -39,12 +51,12 @@ export default function TodayView() {
     getDailyLog(date).then(async (existing) => {
       if (!active) return
       if (existing) {
-        setLog({ ...EMPTY_LOG, ...existing })
+        setLog({ ...EMPTY_LOG, ...withoutNulls(existing) })
         return
       }
       const prior = await getDailyLog(yesterdayOf(date))
       if (!active) return
-      setLog(prior ? { ...EMPTY_LOG, ...prior } : EMPTY_LOG)
+      setLog(prior ? { ...EMPTY_LOG, ...withoutNulls(prior) } : EMPTY_LOG)
     })
 
     getTreatmentLogs(date).then((logs) => {
@@ -132,6 +144,8 @@ export default function TodayView() {
 
   return (
     <>
+      <StreaksCard />
+
       <div className="day-picker">
         <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
       </div>

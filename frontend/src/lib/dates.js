@@ -15,6 +15,15 @@ export function daysAfter(dateStr, n) {
   return shiftDays(dateStr, n)
 }
 
+/** Ascending (oldest first) list of the n days ending on and including endDate. */
+export function lastNDays(endDate, n) {
+  const days = []
+  for (let i = n - 1; i >= 0; i--) {
+    days.push(daysBefore(endDate, i))
+  }
+  return days
+}
+
 function shiftDays(dateStr, n) {
   const d = new Date(`${dateStr}T00:00:00`)
   d.setDate(d.getDate() + n)
