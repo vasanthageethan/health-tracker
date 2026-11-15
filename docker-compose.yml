@@ -1,0 +1,16 @@
+services:
+  health-tracker:
+    build: .
+    # Bound to the host's loopback only -- Tailscale serve is the sole entry point,
+    # same security posture as the native (non-container) deployment.
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      - AUTH_SECRET=${AUTH_SECRET:-}
+      - VAPID_SUBJECT=${VAPID_SUBJECT:-vasanthageethan1102@gmail.com}
+    volumes:
+      - health-tracker-data:/data
+    restart: unless-stopped
+
+volumes:
+  health-tracker-data:
