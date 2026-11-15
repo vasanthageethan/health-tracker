@@ -71,6 +71,9 @@ h2 {
 }
 
 .field-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -95,6 +98,19 @@ h2 {
   border-radius: 10px;
   padding: 16px;
   margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  animation: card-in 0.25s ease-out;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .lock-screen {
@@ -161,6 +177,15 @@ button {
   background: var(--accent);
   color: white;
   cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 .status {
@@ -185,6 +210,12 @@ button {
   border: 1px solid var(--border);
 }
 
+.workout-row button:hover {
+  filter: none;
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
 .workout-form {
   display: grid;
   gap: 8px;
@@ -198,10 +229,19 @@ button {
 }
 
 .tabs button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: transparent;
   color: var(--text-muted);
   border: 1px solid var(--border);
   padding: 6px 12px;
+}
+
+.tabs button:hover {
+  filter: none;
+  border-color: var(--accent);
+  color: var(--text);
 }
 
 @media (max-width: 480px) {
@@ -399,6 +439,17 @@ button {
   font-weight: 700;
   color: var(--accent);
   line-height: 1;
+  display: inline-block;
+}
+
+.streak-number.pulse {
+  animation: streak-pulse 0.4s ease-out;
+}
+
+@keyframes streak-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); }
+  100% { transform: scale(1); }
 }
 
 .streak-label {

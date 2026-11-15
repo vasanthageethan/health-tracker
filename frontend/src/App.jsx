@@ -5,6 +5,14 @@ import TodayView from './components/TodayView'
 import ChecksView from './components/ChecksView'
 import TrendsView from './components/TrendsView'
 import SettingsView from './components/SettingsView'
+import { CalendarIcon, ClipboardIcon, TrendingIcon, SettingsIcon } from './lib/icons'
+
+const TABS = [
+  { key: 'today', label: 'Today', icon: CalendarIcon },
+  { key: 'checks', label: 'Checks', icon: ClipboardIcon },
+  { key: 'trends', label: 'Trends', icon: TrendingIcon },
+  { key: 'settings', label: 'Settings', icon: SettingsIcon },
+]
 
 export default function App() {
   const [tab, setTab] = useState('today')
@@ -18,10 +26,12 @@ export default function App() {
             <h1>Health Tracker</h1>
           </div>
           <nav className="tabs">
-            <button className={tab === 'today' ? 'active' : ''} onClick={() => setTab('today')}>Today</button>
-            <button className={tab === 'checks' ? 'active' : ''} onClick={() => setTab('checks')}>Checks</button>
-            <button className={tab === 'trends' ? 'active' : ''} onClick={() => setTab('trends')}>Trends</button>
-            <button className={tab === 'settings' ? 'active' : ''} onClick={() => setTab('settings')}>Settings</button>
+            {TABS.map(({ key, label, icon: Icon }) => (
+              <button key={key} className={tab === key ? 'active' : ''} onClick={() => setTab(key)}>
+                <Icon />
+                {label}
+              </button>
+            ))}
           </nav>
         </header>
 

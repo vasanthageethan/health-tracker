@@ -7,6 +7,7 @@ import {
 } from '../api'
 import { todayStr, yesterdayOf } from '../lib/dates'
 import { isDueOn } from '../lib/schedule'
+import { MoonIcon, PulseIcon, AppleIcon, AlertIcon } from '../lib/icons'
 import WeatherCard from './WeatherCard'
 import RunPlanSection from './RunPlanSection'
 import StreaksCard from './StreaksCard'
@@ -153,7 +154,7 @@ export default function TodayView() {
       <section className="card">
         <h2>Today</h2>
 
-        <h3 className="field-group">Sleep &amp; schedule</h3>
+        <h3 className="field-group"><MoonIcon /> Sleep &amp; schedule</h3>
         <label>Sleep (hours) <span className="hint">target {sleepMin}–{sleepMax}h</span>
           <input type="number" step="0.1" value={log.sleepHours}
             onChange={(e) => updateField('sleepHours', e.target.value)} />
@@ -164,7 +165,7 @@ export default function TodayView() {
           Bed/wake on schedule <span className="hint">target {onScheduleTarget}+ nights/week</span>
         </label>
 
-        <h3 className="field-group">Body</h3>
+        <h3 className="field-group"><PulseIcon /> Body</h3>
         <label>Resting heart rate (bpm)
           <input type="number" value={log.restingHr}
             onChange={(e) => updateField('restingHr', e.target.value)} />
@@ -174,7 +175,7 @@ export default function TodayView() {
             onChange={(e) => updateField('weightKg', e.target.value)} />
         </label>
 
-        <h3 className="field-group">Nutrition</h3>
+        <h3 className="field-group"><AppleIcon /> Nutrition</h3>
         <label>Protein (g) {proteinTarget && <span className="hint">target {proteinTarget}g+</span>}
           <input type="number" value={log.proteinG}
             onChange={(e) => updateField('proteinG', e.target.value)} />
@@ -184,7 +185,7 @@ export default function TodayView() {
             onChange={(e) => updateField('alcoholDrinks', e.target.value)} />
         </label>
 
-        <h3 className="field-group">Side-effect check</h3>
+        <h3 className="field-group"><AlertIcon /> Side-effect check</h3>
         <label className="checkbox">
           <input type="checkbox" checked={!!log.morningErection}
             onChange={(e) => updateField('morningErection', e.target.checked)} />
